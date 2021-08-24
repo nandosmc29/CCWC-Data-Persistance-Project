@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
 
 public class MainManager : MonoBehaviour
 {
@@ -15,8 +16,9 @@ public class MainManager : MonoBehaviour
     public GameObject GameOverText;
     
     private bool m_Started = false;
-    private int m_Points;
+    private int currentPoints;
     public string playerName;
+    private HighScore highscore = new HighScore();
     
     private bool m_GameOver = false;
 
@@ -66,8 +68,8 @@ public class MainManager : MonoBehaviour
 
     void AddPoint(int point)
     {
-        m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        currentPoints += point;
+        ScoreText.text = $"Score : {currentPoints}";
     }
 
     public void GameOver()
@@ -79,15 +81,22 @@ public class MainManager : MonoBehaviour
 
     private void updateHighScore()
     {
-        if (m_Points > HighScore.points)
+        if (currentPoints > highscore.points)
         {
-            BestScoreText.text = $"Best Score : {playerName} {m_Points}";
+            BestScoreText.text = $"Best Score : {playerName} {currentPoints}";
         }
     }
 
-    static class HighScore
+    [System.Serializable]
+    class HighScore
     {
-        public static string playerName;
-        public static int points;
+        public string playerName;
+        public int points;
+    }
+
+    public void SaveHighScore()
+    {
+        string json = JsonUtility.ToJson(highscore);
+        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
     }
 }
