@@ -25,7 +25,8 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerName = (ScenePersistentData.Instance != null && !string.IsNullOrEmpty(ScenePersistentData.Instance.playerName)) ? playerName = ScenePersistentData.Instance.playerName : playerName = "AAA";
+        LoadHighScore();
+        setPlayerName();
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -79,12 +80,12 @@ public class MainManager : MonoBehaviour
         updateHighScore();
     }
 
-    private void updateHighScore()
+    public void setPlayerName()
     {
-        if (currentPoints > highscore.points)
-        {
-            BestScoreText.text = $"Best Score : {playerName} {currentPoints}";
-        }
+        playerName = 
+            (ScenePersistentData.Instance != null && !string.IsNullOrEmpty(ScenePersistentData.Instance.playerName)) 
+            ? playerName = ScenePersistentData.Instance.playerName 
+            : playerName = "AAA";
     }
 
     [System.Serializable]
@@ -98,5 +99,35 @@ public class MainManager : MonoBehaviour
     {
         string json = JsonUtility.ToJson(highscore);
         File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+    }
+
+    public void LoadHighScore()
+    {
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            highscore = JsonUtility.FromJson<HighScore>(json);
+            updateHighScoreText(highscore.playerName, highscore.points);
+        }
+    }
+
+    private void updateHighScore()
+    {
+        Debug.Log(highscore.points);
+        Debug.Log(currentPoints);
+        if (currentPoints > highscore.points)
+        {
+            Debug.Log("higher");
+            highscore.playerName = playerName;
+            highscore.points = currentPoints;
+            updateHighScoreText(highscore.playerName, highscore.points);
+            SaveHighScore();
+        }
+    }
+
+    private void updateHighScoreText(string playername, int points)
+    {
+        BestScoreText.text = $"Best Score : {playername} {points}";
     }
 }
