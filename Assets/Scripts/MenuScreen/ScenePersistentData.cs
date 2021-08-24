@@ -9,7 +9,6 @@ public class ScenePersistentData : MonoBehaviour
 
     private void Awake()
     {
-        playerName = "AAA";
         if (Instance != null)
         {
             Destroy(gameObject);

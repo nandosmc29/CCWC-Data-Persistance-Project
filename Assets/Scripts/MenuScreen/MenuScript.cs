@@ -34,12 +34,7 @@ public class MenuScript : MonoBehaviour
 
     public void StartNew()
     {
-        if (!string.IsNullOrEmpty(inputName.text))
-        {
-            GameObject.Find("ScenePersistent").GetComponent<ScenePersistentData>().playerName = inputName.text;
-        } else { Debug.Log("Empty"); }
-        
-        
+        GameObject.Find("ScenePersistent").GetComponent<ScenePersistentData>().playerName = inputName.text;
         SceneManager.LoadScene(1);
     }
 }
